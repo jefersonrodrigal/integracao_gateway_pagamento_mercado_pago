@@ -1,0 +1,79 @@
+[project]
+name = "payment-api"
+version = "0.1.0"
+description = "API REST de pagamentos integrada ao Mercado Pago Checkout Transparente (Orders API)."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.161.1",
+    "uvicorn>=0.54.0",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "sqlalchemy[asyncio]>=2.1.6",
+    "asyncpg>=0.32.0",
+    "alembic>=1.20.1",
+    "httpx>=0.28.1",
+    "pyjwt>=2.15.1",
+    "prometheus-client>=0.23.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.17.2",
+    "mypy>=2.4.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "DTZ", "RUF", "SIM", "PL", "N"]
+ignore = [
+    "PLR0913",  # serviços recebem muitas dependências explicitamente
+    "PLR2004",  # números mágicos em regras de domínio são documentados no local
+    "PLR0911",
+    "PLR0912",
+    "B008",     # padrão do FastAPI: Depends() em argumentos default
+    "RUF001",
+    "RUF002",
+    "RUF003",   # textos em português
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "S107", "PLR0915", "PLR0917", "PLC0415", "E501"]
+"alembic/**" = ["S608"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+packages = ["app"]
+
+[[tool.mypy.overrides]]
+module = ["prometheus_client.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+markers = [
+    "integration: requer PostgreSQL (TEST_DATABASE_URL)",
+    "e2e: fluxos ponta a ponta com Mercado Pago simulado",
+]
+filterwarnings = ["error::pytest.PytestUnraisableExceptionWarning"]
