@@ -1,4 +1,4 @@
-# API de PAgamento — Mercado Pago Checkout Transparente
+# API de Pagamento — Mercado Pago Checkout Transparente
 
 API REST assíncrona para pedidos e pagamentos integrada ao **Mercado Pago Checkout
 Transparente via Orders API** (`/v1/orders`): Pix, cartões de crédito/débito (com
